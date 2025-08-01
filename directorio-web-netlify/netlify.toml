@@ -1,0 +1,8 @@
+# netlify.toml
+
+[build]
+  # El directorio que Netlify debe publicar.
+  publish = "public"
+
+  # El directorio donde están tus funciones serverless.
+  functions = "netlify/functions"
