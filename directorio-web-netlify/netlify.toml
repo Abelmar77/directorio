@@ -1,8 +1,11 @@
 # netlify.toml
 
 [build]
-  # El directorio que Netlify debe publicar.
   publish = "public"
-
-  # El directorio donde están tus funciones serverless.
   functions = "netlify/functions"
+
+# --- AÑADIR ESTA SECCIÓN ---
+[functions]
+  # Esto le dice a Netlify que incluya el archivo Excel en el despliegue de la función.
+  # La ruta es desde la raíz de tu proyecto.
+  included_files = ["netlify/functions/directorio.xlsx"]
