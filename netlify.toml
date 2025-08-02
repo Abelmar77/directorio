@@ -1,13 +1,6 @@
 [build]
-  # El directorio a publicar desde la raíz.
   publish = "public"
-  
-  # El directorio de funciones desde la raíz.
-  functions = "netlify/functions"
 
 [functions]
-  # La ruta al archivo a incluir, desde la raíz del repositorio.
-  included_files = ["netlify/functions/directorio.xlsx"]
+  directory = "netlify/functions"
 
-[functions.python]
-  runtime = "python3.11"
