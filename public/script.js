@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch('/.netlify/functions/directorio');
         const json = await response.json();
 
+        // Validamos que sea un array
         if (!Array.isArray(json)) {
             console.error("Respuesta inesperada del servidor:", json);
             tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error del servidor: ${json.error || "Respuesta no válida"}</td></tr>`;
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${error.message}</td></tr>`;
     }
 
+    // Solo se activan si los datos cargaron correctamente
     searchNombreInput.addEventListener('keyup', filtrarDatos);
     searchFederalInput.addEventListener('keyup', filtrarDatos);
 });
-
