@@ -1,5 +1,3 @@
-/* static/script.js */
-
 // Referencias a los elementos del DOM
 const searchNombreInput = document.getElementById('searchNombre');
 const searchFederalInput = document.getElementById('searchFederal');
@@ -12,11 +10,9 @@ const quitarAcentos = (texto) => {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// Función para renderizar (dibujar) la tabla con los datos
+// Función para renderizar la tabla
 const renderTable = (data) => {
-    tableBody.innerHTML = ''; // Limpiar la tabla actual
-    
-    // Si después de filtrar no hay datos, muestra este mensaje.
+    tableBody.innerHTML = '';
     if (data.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No se encontraron resultados.</td></tr>';
         return;
@@ -36,64 +32,50 @@ const renderTable = (data) => {
     });
 };
 
-// --- FUNCIÓN MODIFICADA ---
+// Función para filtrar datos
 const filtrarDatos = () => {
-    // Obtenemos los valores y quitamos espacios en blanco de los costados
     const filtroNombre = searchNombreInput.value.trim();
     const filtroFederal = searchFederalInput.value.trim();
 
-    // Si ambos campos de búsqueda están vacíos, limpia la tabla y muestra un mensaje.
     if (filtroNombre === '' && filtroFederal === '') {
         tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
-        return; // Detiene la función aquí
+        return;
     }
-    
-    // Normalizamos los filtros para la búsqueda (minúsculas y sin acentos)
+
     const filtroNombreNorm = quitarAcentos(filtroNombre.toLowerCase());
     const filtroFederalNorm = quitarAcentos(filtroFederal.toLowerCase());
 
     const datosFiltrados = directorioData.filter(empleado => {
-        // Aseguramos que los datos se traten como texto y los normalizamos
         const nombreCompleto = quitarAcentos(String(empleado.nombre || '').toLowerCase());
         const federal = quitarAcentos(String(empleado.federal || '').toLowerCase());
 
-        const coincideNombre = nombreCompleto.includes(filtroNombreNorm);
-        const coincideFederal = federal.includes(filtroFederalNorm);
-        
-        return coincideNombre && coincideFederal;
+        return nombreCompleto.includes(filtroNombreNorm) && federal.includes(filtroFederalNorm);
     });
 
     renderTable(datosFiltrados);
 };
 
-
-// --- EVENTO DE CARGA MODIFICADO ---
+// Evento DOMContentLoaded corregido
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('/.netlify/functions/directorio');
-        directorioData = await response.json();
-
-        document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('/.netlify/functions/directorio');
         const json = await response.json();
 
-        // Verifica si json es un array
+        // Validamos que sea un array
         if (!Array.isArray(json)) {
             console.error("Respuesta inesperada del servidor:", json);
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error del servidor: ${json.error || "respuesta no válida"}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error del servidor: ${json.error || "Respuesta no válida"}</td></tr>`;
             return;
         }
 
         directorioData = json;
-
         tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
     } catch (error) {
         console.error("Error al cargar los datos del directorio:", error);
         tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${error.message}</td></tr>`;
     }
 
+    // Solo se activan si los datos cargaron correctamente
     searchNombreInput.addEventListener('keyup', filtrarDatos);
     searchFederalInput.addEventListener('keyup', filtrarDatos);
 });
-
