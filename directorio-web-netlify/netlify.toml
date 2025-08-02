@@ -1,15 +1,13 @@
-# netlify.toml
-
-# Como el "Base directory" ya está configurado en la web de Netlify,
-# este archivo solo necesita especificar lo que está adentro.
-
 [build]
+  # El directorio a publicar desde la raíz.
   publish = "public"
+  
+  # El directorio de funciones desde la raíz.
   functions = "netlify/functions"
 
 [functions]
-  # La ruta a los archivos incluidos debe ser desde la raíz de tu repositorio
-  included_files = ["directorio-web-netlify/netlify/functions/directorio.xlsx"]
+  # La ruta al archivo a incluir, desde la raíz del repositorio.
+  included_files = ["netlify/functions/directorio.xlsx"]
 
 [functions.python]
   runtime = "python3.11"
