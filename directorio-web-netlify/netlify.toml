@@ -1,21 +1,15 @@
 # netlify.toml
 
-# Configuración principal de construcción
+# Como el "Base directory" ya está configurado en la web de Netlify,
+# este archivo solo necesita especificar lo que está adentro.
+
 [build]
-  # 1. Directorio Base: Le dice a Netlify que primero entre a la carpeta 'directorio'.
-  base = "directorio"
-  
-  # 2. Directorio de Publicación: La carpeta a publicar, relativa al 'base'.
   publish = "public"
-  
-  # 3. Directorio de Funciones: Relativo al 'base'.
   functions = "netlify/functions"
 
-# Configuración de las funciones
 [functions]
-  # 4. Archivos Incluidos: La ruta debe ser desde la RAÍZ del repositorio.
-  included_files = ["directorio/netlify/functions/directorio.xlsx"]
+  # La ruta a los archivos incluidos debe ser desde la raíz de tu repositorio
+  included_files = ["directorio-web-netlify/netlify/functions/directorio.xlsx"]
 
-# Opcional pero recomendado: Fija la versión de Python.
 [functions.python]
   runtime = "python3.11"
