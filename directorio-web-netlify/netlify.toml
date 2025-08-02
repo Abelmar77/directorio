@@ -1,11 +1,16 @@
+# Este archivo está en la carpeta 'directorio'
+
 [build]
+  # El directorio a publicar, relativo a la ubicación de este toml.
   publish = "public"
+  
+  # El directorio de funciones, relativo a la ubicación de este toml.
   functions = "netlify/functions"
 
 [functions]
-  # La ruta debe ser desde la raíz de la carpeta base ('directorio')
-  included_files = ["netlify/functions/directorio.xlsx"]
+  # La ruta a los archivos incluidos es desde la RAÍZ del repositorio.
+  included_files = ["directorio/netlify/functions/directorio.xlsx"]
 
-# --- AÑADIR ESTO PARA DEFINIR LA VERSIÓN DE PYTHON ---
+# Opcional pero recomendado: Fija la versión de Python.
 [functions.python]
   runtime = "python3.11"
