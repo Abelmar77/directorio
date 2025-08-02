@@ -72,16 +72,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('/.netlify/functions/directorio');
         directorioData = await response.json();
-        
-        // Al cargar la página, en lugar de mostrar todos los datos, mostramos un mensaje inicial.
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
 
+        document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/.netlify/functions/directorio');
+        const json = await response.json();
+
+        // Verifica si json es un array
+        if (!Array.isArray(json)) {
+            console.error("Respuesta inesperada del servidor:", json);
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error del servidor: ${json.error || "respuesta no válida"}</td></tr>`;
+            return;
+        }
+
+        directorioData = json;
+
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
     } catch (error) {
         console.error("Error al cargar los datos del directorio:", error);
         tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${error.message}</td></tr>`;
     }
 
-    // Los eventos se mantienen igual, llamarán a la función de filtro cada vez que escribas.
     searchNombreInput.addEventListener('keyup', filtrarDatos);
     searchFederalInput.addEventListener('keyup', filtrarDatos);
 });
+
