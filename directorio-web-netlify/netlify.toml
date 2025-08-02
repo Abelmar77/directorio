@@ -1,14 +1,19 @@
-# Este archivo está en la carpeta 'directorio'
+# netlify.toml
 
+# Configuración principal de construcción
 [build]
-  # El directorio a publicar, relativo a la ubicación de este toml.
+  # 1. Directorio Base: Le dice a Netlify que primero entre a la carpeta 'directorio'.
+  base = "directorio"
+  
+  # 2. Directorio de Publicación: La carpeta a publicar, relativa al 'base'.
   publish = "public"
   
-  # El directorio de funciones, relativo a la ubicación de este toml.
+  # 3. Directorio de Funciones: Relativo al 'base'.
   functions = "netlify/functions"
 
+# Configuración de las funciones
 [functions]
-  # La ruta a los archivos incluidos es desde la RAÍZ del repositorio.
+  # 4. Archivos Incluidos: La ruta debe ser desde la RAÍZ del repositorio.
   included_files = ["directorio/netlify/functions/directorio.xlsx"]
 
 # Opcional pero recomendado: Fija la versión de Python.
