@@ -5,9 +5,8 @@ const path = require('path');
 
 exports.handler = async function (event, context) {
     try {
-        // Netlify coloca los archivos incluidos junto al script de la función.
-        // Esta es la forma más simple y correcta de encontrarlo.
-        const filePath = path.join(__dirname, 'directorio.xlsx');
+        // CORRECCIÓN: Añadimos 'files' a la ruta.
+        const filePath = path.join(__dirname, 'files/directorio.xlsx');
 
         const workbook = xlsx.readFile(filePath);
         const sheetName = workbook.SheetNames[0];
