@@ -1,10 +1,11 @@
-# Ubicado en: directorio/netlify.toml
+# netlify.toml
+# Este archivo debe estar en la RAÍZ de tu repositorio.
 
 [build]
-  base = "directorio"
+  # No hay 'base', porque el proyecto ya está en la raíz.
   publish = "public"
   functions = "netlify/functions"
 
 [functions]
-  # CORRECCIÓN: Apunta a la ruta exacta del archivo desde la raíz del repo.
-  included_files = ["directorio/netlify/functions/files/directorio.xlsx"]
+  # La ruta es desde la raíz del repositorio.
+  included_files = ["netlify/functions/files/directorio.xlsx"]
