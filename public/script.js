@@ -12,13 +12,17 @@ const quitarAcentos = (texto) => {
 
 // Función para renderizar la tabla
 const renderTable = (data) => {
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Limpiar la tabla actual
+    
+    // Si después de filtrar no hay datos, muestra este mensaje.
+    // CORRECCIÓN: colspan ahora es "7"
     if (data.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No se encontraron resultados.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No se encontraron resultados.</td></tr>';
         return;
     }
 
     data.forEach(empleado => {
+        // CORRECCIÓN: Usamos los nombres de columna en minúsculas del Excel
         const row = `
             <tr>
                 <td>${empleado.nombre}</td>
@@ -26,7 +30,7 @@ const renderTable = (data) => {
                 <td>${empleado.telefono}</td>
                 <td>${empleado.celular || ''}</td>
                 <td>${empleado.federal} - ${empleado.sede}</td>
-            </tr>
+                <td>${empleado.horario || ''}</td>  <td>${empleado.comida || ''}</td>   </tr>
         `;
         tableBody.innerHTML += row;
     });
@@ -59,23 +63,19 @@ const filtrarDatos = () => {
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('/.netlify/functions/directorio');
-        const json = await response.json();
+        directorioData = await response.json();
+        
+        // CORRECCIÓN: colspan ahora es "7"
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
 
-        // Validamos que sea un array
-        if (!Array.isArray(json)) {
-            console.error("Respuesta inesperada del servidor:", json);
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error del servidor: ${json.error || "Respuesta no válida"}</td></tr>`;
-            return;
-        }
-
-        directorioData = json;
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>';
     } catch (error) {
         console.error("Error al cargar los datos del directorio:", error);
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${error.message}</td></tr>`;
+        // CORRECCIÓN: colspan ahora es "7"
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">${error.message}</td></tr>`;
     }
 
-    // Solo se activan si los datos cargaron correctamente
+    // Los eventos se mantienen igual
     searchNombreInput.addEventListener('keyup', filtrarDatos);
     searchFederalInput.addEventListener('keyup', filtrarDatos);
 });
+
