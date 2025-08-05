@@ -1,7 +1,7 @@
 {
-  "name": "directorio-functions",
+  "name": "directorio-netlify-functions",
   "version": "1.0.0",
   "dependencies": {
-    "xlsx": "^0.18.5"
+    "google-spreadsheet": "^4.1.1"
   }
 }
