@@ -18,29 +18,39 @@
         <div class="search-box">
             <label for="searchNombre">Buscar por Nombre:</label>
             <input type="text" id="searchNombre" placeholder="Escribe un nombre...">
-            <label for="searchFederal">Buscar por Fiscalía:</label>
-            <input type="text" id="searchFederal" placeholder="Escribe un federal...">
+            
+            <label for="searchFederal">Buscar por Federal:</label>
+            <input type="text" id="searchFederal" placeholder="Escribe una sede...">
+
+            <label for="filterPuesto">Filtrar por Puesto:</label>
+            <select id="filterPuesto">
+                <option value="">-- Todos --</option>
+            </select>
         </div>
+
+        <div id="loading-spinner" class="spinner-container" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+
         <div class="table-container">
-           <table>
-    <thead>
-        <tr>
-            <th>Nombre Completo</th>
-            <th>Puesto</th>
-            <th>Extensión</th>
-            <th>Celular</th>
-            <th>Federal / Sede</th>
-            <th>Horario Laboral</th> <th>Hora de Comida</th>  </tr>
-    </thead>
-    <tbody id="directorio-tbody"></tbody>
-</table>
+            <table>
+                <thead>
+                    <tr>
+                        <th data-sort="nombre" class="sortable">Nombre Completo <span></span></th>
+                        <th data-sort="puesto" class="sortable">Puesto <span></span></th>
+                        <th>Extensión</th>
+                        <th>Celular</th>
+                        <th>Federal / Sede</th>
+                        <th>Horario Laboral</th>
+                        <th>Hora de Comida</th>
+                    </tr>
+                </thead>
+                <tbody id="directorio-tbody"></tbody>
+            </table>
         </div>
     </div>
 
-   <script defer src="script.js"></script>
+    <script defer src="script.js"></script>
 
 </body>
-
 </html>
-
-
