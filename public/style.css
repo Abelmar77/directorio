@@ -4,15 +4,14 @@ body {
     color: #1c1e21;
     margin: 0;
     display: flex;
-    /* Corrección: Se cambió la dirección del flexbox para apilar verticalmente */
     flex-direction: column; 
     align-items: center;
     min-height: 100vh;
-} /* <--- ¡ESTA LLAVE FALTABA! */
+}
 
 .container {
     width: 90%;
-    max-width: 1000px;
+    max-width: 1200px; /* Aumentamos el ancho máximo */
     background-color: #ffffff;
     padding: 25px;
     border-radius: 8px;
@@ -32,18 +31,13 @@ label {
     text-align: right;
 }
 
-input[type="text"] {
+input[type="text"], select {
     width: 100%;
     padding: 10px;
     border: 1px solid #dddfe2;
     border-radius: 6px;
     font-size: 16px;
     box-sizing: border-box;
-}
-
-input[type="text"]:focus {
-    border-color: #1877f2;
-    outline: none;
 }
 
 table {
@@ -71,7 +65,8 @@ tbody tr:hover {
     background-color: #e9ebee;
 }
 
-/* --- Estilos para el Header y Logos (Estos no se estaban aplicando) --- */
+/* --- Nuevos Estilos --- */
+
 .header {
     width: 100%;
     display: flex;
@@ -83,13 +78,103 @@ tbody tr:hover {
     margin-bottom: 20px;
 }
 
-.header .logo {
-    height: 60px;
-    width: auto;
+.header .logo { height: 60px; width: auto; }
+.header h1 { margin: 0; font-size: 24px; color: #333; }
+
+/* Resaltado de búsqueda */
+mark {
+    background-color: #fffb8f;
+    padding: 0;
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #333;
+/* Icono para copiar */
+.copy-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    font-style: normal;
+    opacity: 0.6;
+    display: inline-block;
+}
+.copy-icon:hover { opacity: 1; }
+
+/* Estilos para ordenar tabla */
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+.sortable:hover { background-color: #e9ebee; }
+.sortable span::after {
+    content: ' ';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-left: 5px;
+}
+.sortable.asc span::after { border-bottom: 5px solid #333; }
+.sortable.desc span::after { border-top: 5px solid #333; }
+
+/* Indicador de Carga */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    animation: spin 1s ease infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Diseño Responsivo para Móviles --- */
+@media (max-width: 768px) {
+    .search-box {
+        grid-template-columns: 1fr; /* Una columna */
+        gap: 5px;
+    }
+    label { text-align: left; margin-bottom: 5px; }
+
+    /* Transforma la tabla en tarjetas */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr { border: 1px solid #ccc; margin-bottom: 10px; }
+    td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+    }
+    td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+
+    /* Asigna los títulos de columna a cada celda */
+    td:nth-of-type(1):before { content: "Nombre:"; }
+    td:nth-of-type(2):before { content: "Puesto:"; }
+    td:nth-of-type(3):before { content: "Extensión:"; }
+    td:nth-of-type(4):before { content: "Celular:"; }
+    td:nth-of-type(5):before { content: "Sede:"; }
+    td:nth-of-type(6):before { content: "Horario:"; }
+    td:nth-of-type(7):before { content: "Comida:"; }
 }
