@@ -178,3 +178,41 @@ mark {
     td:nth-of-type(6):before { content: "Horario:"; }
     td:nth-of-type(7):before { content: "Comida:"; }
 }
+
+/* ... (tu CSS existente) ... */
+
+/* --- Estilos para la función de Fijar --- */
+
+/* Estilo para la columna de fijar */
+.pin-header, .pin-cell {
+    width: 50px;
+    text-align: center;
+}
+
+/* Estilo para el checkbox */
+.pin-checkbox {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+/* Estilo para la fila fijada */
+tr.pinned-row {
+    background-color: #e8f5e9 !important; /* Un verde suave para destacar */
+}
+
+/* --- Ajustes en el Diseño Responsivo --- */
+@media (max-width: 768px) {
+    /* ... (tu CSS responsivo existente) ... */
+
+    /* Asigna los títulos de columna a cada celda (actualizado) */
+    td:nth-of-type(1):before { content: "Fijar"; } /* Celda del checkbox */
+    td:nth-of-type(2):before { content: "Nombre:"; }
+    td:nth-of-type(3):before { content: "Puesto:"; }
+    td:nth-of-type(4):before { content: "Extensión:"; }
+    td:nth-of-type(5):before { content: "Celular:"; }
+    td:nth-of-type(6):before { content: "Sede:"; }
+    td:nth-of-type(7):before { content: "Horario:"; }
+    td:nth-of-type(8):before { content: "Comida:"; }
+}
+
