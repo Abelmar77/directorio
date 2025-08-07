@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadingSpinner = document.getElementById('loading-spinner');
 
     let directorioData = [];
+    let pinnedEmployees = []; // NUEVO: Array para guardar los empleados fijados
     let sortState = { column: 'nombre', direction: 'asc' };
 
     // --- Funciones de Utilidad ---
@@ -25,42 +26,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     const renderTable = (data, filters) => {
         tableBody.innerHTML = '';
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No se encontraron resultados.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No se encontraron resultados.</td></tr>`;
             return;
         }
 
+        const isPinned = (employee) => pinnedEmployees.some(p => p.nombre === employee.nombre);
+
         data.forEach(empleado => {
             const row = document.createElement('tr');
+            if (isPinned(empleado)) {
+                row.classList.add('pinned-row');
+            }
             
+            // Lógica para resaltar el texto buscado
             const highlight = (text, filter) => {
-                if (!filter) return text;
+                if (!filter || !text) return text;
                 const regex = new RegExp(`(${filter})`, 'gi');
-                return text.replace(regex, `<mark>$1</mark>`);
+                return String(text).replace(regex, `<mark>$1</mark>`);
             };
 
-            const createCell = (content) => {
+            const createCell = (content, className = '') => {
                 const cell = document.createElement('td');
+                if (className) cell.className = className;
                 cell.innerHTML = content;
                 return cell;
             };
 
             const createCopyCell = (text) => {
-                const cell = createCell(text);
-                if (text) {
-                    const icon = document.createElement('i');
-                    icon.className = 'copy-icon';
-                    icon.textContent = '📋';
-                    icon.title = 'Copiar';
-                    icon.onclick = () => {
-                        navigator.clipboard.writeText(text);
-                        icon.textContent = '✅';
-                        setTimeout(() => { icon.textContent = '📋'; }, 1000);
-                    };
-                    cell.appendChild(icon);
-                }
-                return cell;
+                 const content = text ? `${text} <i class="copy-icon" title="Copiar">📋</i>` : '';
+                 return createCell(content);
             };
+
+            // Crear celda para el checkbox de fijar
+            const pinCell = createCell('', 'pin-cell');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'pin-checkbox';
+            checkbox.dataset.employeeName = empleado.nombre;
+            checkbox.checked = isPinned(empleado);
+            pinCell.appendChild(checkbox);
             
+            row.appendChild(pinCell);
             row.appendChild(createCell(highlight(empleado.nombre, filters.nombre)));
             row.appendChild(createCell(empleado.puesto));
             row.appendChild(createCopyCell(empleado.telefono));
@@ -77,16 +83,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         const filtroNombre = searchNombreInput.value.trim();
         const filtroFederal = searchFederalInput.value.trim();
         const filtroPuesto = filterPuestoSelect.value;
+        
+        const noFilters = !filtroNombre && !filtroFederal && !filtroPuesto;
 
-        if (!filtroNombre && !filtroFederal && !filtroPuesto) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Ingrese un término de búsqueda o filtro.</td></tr>`;
+        // Si no hay filtros, mostrar solo los fijados. Si no hay fijados, mostrar mensaje.
+        if (noFilters) {
+            if (pinnedEmployees.length > 0) {
+                renderTable(pinnedEmployees.sort(sortFunction), {});
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Ingrese un término de búsqueda o filtro.</td></tr>`;
+            }
             return;
         }
 
         const filtroNombreNorm = quitarAcentos(filtroNombre.toLowerCase());
         const filtroFederalNorm = quitarAcentos(filtroFederal.toLowerCase());
 
-        const datosFiltrados = directorioData.filter(empleado => {
+        let datosFiltrados = directorioData.filter(empleado => {
             const nombreCompleto = quitarAcentos(String(empleado.nombre || '').toLowerCase());
             const federal = quitarAcentos(String(empleado.federal || '').toLowerCase());
             const puesto = empleado.puesto || '';
@@ -95,29 +108,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                    federal.includes(filtroFederalNorm) &&
                    (filtroPuesto === '' || puesto === filtroPuesto);
         });
+
+        // Combinar resultados filtrados y fijados, sin duplicados
+        const combinedResults = [...pinnedEmployees, ...datosFiltrados];
+        const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.nombre, item])).values());
         
         // Ordenar los datos
-        datosFiltrados.sort((a, b) => {
+        const sortFunction = (a, b) => {
             const valA = String(a[sortState.column] || '').toLowerCase();
             const valB = String(b[sortState.column] || '').toLowerCase();
             if (valA < valB) return sortState.direction === 'asc' ? -1 : 1;
             if (valA > valB) return sortState.direction === 'asc' ? 1 : -1;
             return 0;
-        });
+        };
+        uniqueResults.sort(sortFunction);
 
-        renderTable(datosFiltrados, { nombre: filtroNombreNorm, federal: filtroFederalNorm });
+        renderTable(uniqueResults, { nombre: filtroNombreNorm, federal: filtroFederalNorm });
     };
     
     const debouncedProcessData = debounce(processData, 300);
 
     // --- Inicialización ---
+    // (Esta sección no cambia mucho, solo el colspan)
     loadingSpinner.style.display = 'flex';
-    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Cargando directorio...</td></tr>`;
-
+    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Cargando directorio...</td></tr>`;
     try {
         const response = await fetch('/.netlify/functions/directorio');
         directorioData = await response.json();
-        
         const puestos = [...new Set(directorioData.map(e => e.puesto).filter(Boolean))].sort();
         puestos.forEach(puesto => {
             const option = document.createElement('option');
@@ -125,11 +142,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             option.textContent = puesto;
             filterPuestoSelect.appendChild(option);
         });
-
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Ingrese un término de búsqueda para ver resultados.</td></tr>`;
     } catch (error) {
         console.error("Error al cargar los datos:", error);
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">${error.message}</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">${error.message}</td></tr>`;
     } finally {
         loadingSpinner.style.display = 'none';
     }
@@ -141,18 +157,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     tableHeaders.forEach(header => {
         header.addEventListener('click', () => {
+            // Lógica de ordenamiento (sin cambios)
             const column = header.dataset.sort;
             if (sortState.column === column) {
-                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+                sortState.direction = sort.direction === 'asc' ? 'desc' : 'asc';
             } else {
                 sortState.column = column;
                 sortState.direction = 'asc';
             }
-            // Actualizar indicadores visuales
             tableHeaders.forEach(h => h.classList.remove('asc', 'desc'));
             header.classList.add(sortState.direction);
-            
-            processData(); // Ordenar y renderizar de nuevo
+            processData();
         });
+    });
+
+    // NUEVO: Event listener para los checkboxes y los íconos de copiar
+    tableBody.addEventListener('click', (event) => {
+        // Lógica para fijar/desfijar
+        if (event.target.classList.contains('pin-checkbox')) {
+            const name = event.target.dataset.employeeName;
+            const employee = directorioData.find(e => e.nombre === name);
+            if (!employee) return;
+
+            if (event.target.checked) {
+                if (!pinnedEmployees.some(p => p.nombre === name)) {
+                    pinnedEmployees.push(employee);
+                }
+            } else {
+                pinnedEmployees = pinnedEmployees.filter(p => p.nombre !== name);
+            }
+            processData();
+        }
+
+        // Lógica para copiar
+        if (event.target.classList.contains('copy-icon')) {
+            const textToCopy = event.target.parentElement.textContent.replace('📋', '').replace('✅', '').trim();
+            navigator.clipboard.writeText(textToCopy);
+            event.target.textContent = '✅';
+            setTimeout(() => { event.target.textContent = '📋'; }, 1000);
+        }
     });
 });
